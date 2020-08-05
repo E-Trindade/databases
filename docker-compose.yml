@@ -1,0 +1,50 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+      # - postgres:/data/postgres
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    # networks:
+    #   - postgres
+    networks:
+      postgres_net:
+        ipv4_address: 192.50.50.2
+
+  mongo:
+    image: mongo
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: MongoDB2019!
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      postgres_net:
+        ipv4_address: 192.50.50.3
+
+
+networks:
+  postgres_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.50.50.0/16
+         # gateway: 192.50.50.1
+volumes: 
+  postgres-data:
+    external: true
+  mongo-data:
+    external: true
+# volumes:
+#     postgres:
+
